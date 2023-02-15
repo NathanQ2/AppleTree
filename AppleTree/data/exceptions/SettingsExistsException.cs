@@ -1,6 +1,6 @@
 namespace AppleTree.data.exceptions;
 
-public class SettingsExistsException
+public class SettingsExistsException : Exception
 {
     
 }

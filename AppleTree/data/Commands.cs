@@ -1,6 +1,4 @@
-using System.Runtime.CompilerServices;
-
-namespace AppleTree.misc;
+namespace AppleTree.data;
 
 public static class Commands
 {
@@ -43,12 +41,12 @@ public static class Commands
         if (specificHelp == "")
         {
             Console.WriteLine("HELP (no case-sensitive commands):" +
-                              "\n    - appletree install (pkg)" +
+                              "\n    - appletree get (treeName/repoName)" +
                               "\n    - appletree addTree (ip)" +
                               "\n    - appletree lsTrees" +
-                              "\n    - appletree lsApples");
+                              "\n    - appletree lsApples (treeName)");
         }
-        else if (specificHelp == "install")
+        else if (specificHelp == "get")
         {
             Console.WriteLine("HELP:" +
                               "\nInstall (pkg)" +

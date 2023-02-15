@@ -1,6 +1,9 @@
 namespace AppleTree.data.exceptions;
 
-public class JsonPresenceException
+public class JsonPresenceException : Exception
 {
-    
+    public JsonPresenceException()
+    {
+        
+    }
 }
