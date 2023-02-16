@@ -1,4 +1,7 @@
-namespace AppleTree.data;
+using AppleTree.ProgramData.TreeManagement;
+
+namespace AppleTree.ProgramData.Utils;
+
 
 public class Settings
 {

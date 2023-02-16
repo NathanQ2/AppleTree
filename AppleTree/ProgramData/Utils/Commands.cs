@@ -1,4 +1,7 @@
-namespace AppleTree.data;
+using AppleTree.ProgramData.TreeManagement;
+
+
+namespace AppleTree.ProgramData.Utils;
 
 public static class Commands
 {
@@ -6,9 +9,11 @@ public static class Commands
 
     public static bool Debug;
 
+    public static Tree? ActiveLocalTree;
+
     public static void DoCommand(string[] cmds)
     {
-        string baseCmd = cmds[0].ToLower();
+        string baseCmd = cmds[0];
 
         if (baseCmd == "help")
         {
@@ -30,9 +35,14 @@ public static class Commands
             Debug = !Debug;
             Console.WriteLine($"Debugging set to: {Debug}");
         }
-        else if (baseCmd == "addtree")
+        else if (baseCmd == "newTree")
         {
-            
+            ActiveLocalTree = new Tree {Name = cmds[1], HeadDir = Directory.GetCurrentDirectory()};
+            JsonManager.NewTree(ActiveLocalTree, ActiveLocalTree.HeadDir);
+        }
+        else
+        {
+            Console.WriteLine("Command not recognized");
         }
     }
     
@@ -41,7 +51,7 @@ public static class Commands
         if (specificHelp == "")
         {
             Console.WriteLine("HELP (no case-sensitive commands):" +
-                              "\n    - appletree get (treeName/repoName)" +
+                              "\n    - appletree get (treeName/appleName)" +
                               "\n    - appletree addTree (ip)" +
                               "\n    - appletree lsTrees" +
                               "\n    - appletree lsApples (treeName)");
@@ -49,7 +59,7 @@ public static class Commands
         else if (specificHelp == "get")
         {
             Console.WriteLine("HELP:" +
-                              "\nInstall (pkg)" +
+                              "\nget (pkg)" +
                               "\n    - downloads a repository");
         }
     }

@@ -1,4 +1,4 @@
-namespace AppleTree.data;
+namespace AppleTree.ProgramData.Utils;
 
 public static class SetupManager
 {

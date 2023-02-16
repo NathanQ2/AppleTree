@@ -1,5 +1,9 @@
-﻿using AppleTree.data;
-using AppleTree.data.exceptions;
+﻿using AppleTree.ProgramData.Utils;
+using AppleTree.ProgramData.Utils.Exceptions;
+
+// Apple = a file
+// Tree = a project
+// Branch = a branch
 
 namespace AppleTree;
 
