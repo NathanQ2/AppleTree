@@ -45,7 +45,7 @@ internal static class Program
     {
         while (true) // application loop
         {
-            Console.Write(">");
+            Console.Write($"{Commands.LocalTreeName ?? ""}>");
             string cmd = Console.ReadLine() ?? "";
             Commands.DoCommand(cmd.Split(' '));
 

@@ -1,5 +1,6 @@
 using AppleTree.ProgramData.AppleManagement;
 using AppleTree.ProgramData.Utils;
+using AppleTree.ProgramData.Utils.Exceptions;
 
 namespace AppleTree.ProgramData.TreeManagement;
 
@@ -9,15 +10,27 @@ public class Tree
     public string? HeadDir { get; set; }
     public List<Apple> Apples { get; private set; } = new List<Apple>();
 
-    public void NewApple(Apple apple, string parentPath)
+    public void AddApple(Apple apple, string filePath)
     {
         Apples.Add(apple);
-        JsonManager.NewApple(apple, parentPath); // this func will write all required info files
+        JsonManager.NewApple(apple, filePath, HeadDir ?? throw new TreePresenceException(this)); // this func will write all required info files
     }
 
-    public void NewApple(string name, string parentPath)
+    public void AddApple(string name, string filePath)
     {
-        Apples.Add(new Apple {TrackedFileName = name});
-        JsonManager.NewApple(Apples[^1], parentPath);
+        Apples.Add(new Apple {TrackedFileName = name, TrackedFilePath = filePath, TrackedFile = File.ReadAllText(filePath)});
+        //JsonManager.NewApple(Apples[^1], filePath, HeadDir ?? throw new TreePresenceException(this));
+        JsonManager.OverwriteTree(HeadDir ?? throw new TreeException(this), this);
+    }
+
+    public void AddApples(List<string> names, List<string> filePaths)
+    {
+        if (names.Count != filePaths.Count)
+            throw new InvalidNameAndPathException();
+
+        for (int i = 0; i < names.Count; i++)
+        {
+            AddApple(names[i], filePaths[i]);
+        }
     }
 }

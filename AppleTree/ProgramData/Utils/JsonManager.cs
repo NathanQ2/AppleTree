@@ -36,31 +36,91 @@ public static class JsonManager
         return JsonSerializer.Deserialize<Settings>(json) ?? throw new JsonPresenceException();
     }
 
-    public static void NewApple(Apple apple, string applePath)
+    public static void NewApple(Apple apple, string applePath, string headPath)
     {
         if (!Path.Exists(applePath))
             throw new PathExistsException(applePath);
-
-        FileStream fs = File.Open($"{applePath}/.apple", FileMode.CreateNew, FileAccess.ReadWrite);
+        //read all apples
+        FileStream fs = File.Open($"{headPath}/.apples", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        StreamReader sr = new StreamReader(fs);
+        Apple[] apples = Array.Empty<Apple>();
+        try
+        {
+            apples = JsonSerializer.Deserialize<Apple[]>(sr.ReadToEnd());
+        }
+        catch (JsonException e)
+        {
+            
+        }
+        List<Apple> curApples = new List<Apple>(apples ?? Array.Empty<Apple>());
+        curApples.Add(apple);
+        sr.Close();
+        fs.Close();
+        
+        File.Delete($"{headPath}/.apples");
+        fs = File.Open($"{headPath}/.apples", FileMode.Create, FileAccess.ReadWrite);
+        //re-write all apples
         StreamWriter sw = new StreamWriter(fs);
-        string json = JsonSerializer.Serialize(apple, new JsonSerializerOptions {WriteIndented = true});
+        string json = JsonSerializer.Serialize(curApples, new JsonSerializerOptions {WriteIndented = true});
         sw.Write(json);
         sw.Close();
         fs.Close();
-        Console.WriteLine($"New apple created at: {applePath}");
+        Console.WriteLine($"New apple created for: {applePath}");
     }
 
     public static void NewTree(Tree tree, string treePath)
     {
         if (!Path.Exists(treePath))
             throw new PathExistsException(treePath);
-
-        FileStream fs = File.Open($"{treePath}/.tree", FileMode.CreateNew, FileAccess.ReadWrite);
+        FileStream? fs;
+        try
+        {
+            fs = File.Open($"{treePath}/.tree", FileMode.CreateNew, FileAccess.ReadWrite);
+        }
+        catch (IOException e)
+        {
+            throw new TreePresenceException(GetTree($"{treePath}/.tree"));
+        }
         StreamWriter sw = new StreamWriter(fs);
         string json = JsonSerializer.Serialize(tree, new JsonSerializerOptions {WriteIndented = true});
         sw.Write(json);
         sw.Close();
         fs.Close();
         Console.WriteLine($"New tree created at: {treePath}");
+    }
+
+    public static void OverwriteTree(string path, Tree tree)
+    {
+        if (!Path.Exists(path))
+            throw new PathExistsException(path);
+        FileStream? fs;
+        try
+        {
+            File.Delete($"{path}/.tree");
+            fs = File.Open($"{path}/.tree", FileMode.Create, FileAccess.ReadWrite);
+        }
+        catch (IOException e)
+        {
+            throw new TreePresenceException(GetTree($"{path}/.tree"));
+        }
+        StreamWriter sw = new StreamWriter(fs);
+        string json = JsonSerializer.Serialize(tree, new JsonSerializerOptions {WriteIndented = true});
+        sw.Write(json);
+        sw.Close();
+        fs.Close();
+    }
+
+    public static Tree GetTree(string treePath)
+    {
+        FileStream fs = File.Open(treePath, FileMode.Open, FileAccess.Read);
+        StreamReader sr = new StreamReader(fs);
+
+        string json = sr.ReadToEnd();
+        Tree tree = JsonSerializer.Deserialize<Tree>(json) ?? throw new JsonPresenceException(json);
+        
+        sr.Close();
+        fs.Close();
+
+        return tree;
     }
 }
