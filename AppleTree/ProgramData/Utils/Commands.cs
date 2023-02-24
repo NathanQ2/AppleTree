@@ -90,7 +90,7 @@ public static class Commands
                 string[] potentialDirs = Directory.GetDirectories(WorkingDir);
                 List<string> finalPaths = new List<string>(), finalNames = new List<string>();
 
-                for (int i = 0; i < potentialDirs.Length; i++) // exclude apple already tracked
+                for (int i = 0; i < potentialDirs.Length - 1; i++) // exclude apple already tracked
                 {
                     Apple curApple = ActiveLocalTree.Apples[i];
                     if (WorkingDir + "/" + ActiveLocalTree.Apples[i].TrackedFilePath != potentialDirs[i])
@@ -100,10 +100,10 @@ public static class Commands
                     }
                 }
                 ActiveLocalTree.AddApples(finalNames, finalPaths);
-                Console.WriteLine("Added File(s)");
-                foreach (string path in finalPaths)
+
+                foreach (string fileName in finalNames)
                 {
-                    Console.WriteLine(path);
+                    Console.WriteLine($"Tracking: {fileName}");
                 }
             }
             else
@@ -113,23 +113,46 @@ public static class Commands
         }
         else if (baseCmd == "submit")
         {
-            
+            if (ActiveLocalTree == null)
+            {
+                Console.WriteLine("No active tree.");
+
+                return;
+            }
+            ActiveLocalTree.UpdateApples();
+        }
+        else if (baseCmd == "unSubmit")
+        {
+            if (ActiveLocalTree == null)
+            {
+                Console.WriteLine("No active tree.");
+
+                return;
+            }
+            ActiveLocalTree.RollBackApples();
         }
         else
         {
-            Console.WriteLine("Command not recognized");
+            Console.WriteLine("Command not recognized.");
         }
     }
+
+    public static void LoadTree()
+    {
+        ActiveLocalTree = JsonManager.GetTree($"{WorkingDir}/.tree");
+    }
     
-    public static void Help(string specificHelp)
+    private static void Help(string specificHelp)
     {
         if (specificHelp == "")
         {
             Console.WriteLine("HELP (no case-sensitive commands):" +
-                              "\n    - appletree get (treeName/appleName)" +
-                              "\n    - appletree addTree (ip)" +
-                              "\n    - appletree lsTrees" +
-                              "\n    - appletree lsApples (treeName)");
+                              "\n    newTree - creates a new tree" +
+                              "\n    track/addApple - select file/directory to start tracking in a tree" +
+                              "\n    submit - submits changes of tracked files to local tree" +
+                              "\n    submit n/network submits changes of tracked files to network tree" +
+                              "\n    unSubmit rolls back changes made to local tree" +
+                              "\n    unSubmit n/network rolls back changes made to network tree");
         }
         else if (specificHelp == "get")
         {

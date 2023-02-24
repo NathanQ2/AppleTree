@@ -33,4 +33,32 @@ public class Tree
             AddApple(names[i], filePaths[i]);
         }
     }
+    public void UpdateApple(Apple apple)
+    {
+        string updatedApple = File.ReadAllText(apple.TrackedFilePath ?? throw new InvalidAppleException(apple));
+        apple.TrackedFile = updatedApple;
+        JsonManager.OverwriteTree(HeadDir ?? throw new TreeException(this), this);
+    }
+    public void UpdateApples()
+    {
+        foreach (Apple apple in Apples)
+        {
+            Console.WriteLine($"Updated: {apple.TrackedFileName}");
+            UpdateApple(apple);
+        }
+    }
+
+    public void RollBackApple(Apple apple)
+    {
+        FileManager.WriteTo(apple.TrackedFilePath ?? throw new InvalidAppleException(apple), apple.TrackedFile ?? throw new InvalidAppleException(apple));
+    }
+    
+    public void RollBackApples()
+    {
+        foreach (Apple apple in Apples)
+        {
+            Console.WriteLine($"Rolled back {apple.TrackedFileName}");
+            RollBackApple(apple);
+        }
+    }
 }

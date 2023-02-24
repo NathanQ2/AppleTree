@@ -13,4 +13,14 @@ public static class FileManager
         Console.WriteLine(folders[^1]);
         return folders[^1];
     }
+
+    public static void WriteTo(string filePath, string fileContents)
+    {
+        File.Delete(filePath);
+        FileStream fs = File.Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        StreamWriter sw = new StreamWriter(fs);
+        sw.WriteLine(fileContents);
+        sw.Close();
+        fs.Close();
+    }
 }
