@@ -1,5 +1,6 @@
 using System.Text.Json;
-
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using AppleTree.ProgramData.AppleManagement;
 using AppleTree.ProgramData.TreeManagement;
 using AppleTree.ProgramData.Utils.Exceptions;
@@ -9,13 +10,20 @@ namespace AppleTree.ProgramData.Utils;
 
 public static class JsonManager
 {
+    private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+    {
+        WriteIndented = true,
+        AllowTrailingCommas = true,
+        TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+    };
+    
     private static readonly string ExePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? throw new Exception("Could not find application exe path.");
     public static void OverwriteSettings(Settings? settings)
     {
         Directory.CreateDirectory($"{ExePath}/data/");
         FileStream fs = File.Open($"{ExePath}/data/settings.json", FileMode.OpenOrCreate, FileAccess.ReadWrite);
         StreamWriter sw = new StreamWriter(fs);
-        sw.Write(JsonSerializer.Serialize(settings, new JsonSerializerOptions {WriteIndented = true, }));
+        sw.Write(JsonSerializer.Serialize(settings, JsonOptions));
         sw.Close();
         fs.Close();
     }
@@ -33,7 +41,7 @@ public static class JsonManager
         sr.Close();
         fs.Close();
 
-        return JsonSerializer.Deserialize<Settings>(json) ?? throw new JsonPresenceException();
+        return JsonSerializer.Deserialize<Settings>(json, JsonOptions) ?? throw new JsonPresenceException();
     }
 
     public static void NewApple(Apple apple, string applePath, string headPath)
@@ -46,7 +54,7 @@ public static class JsonManager
         Apple[] apples = Array.Empty<Apple>();
         try
         {
-            apples = JsonSerializer.Deserialize<Apple[]>(sr.ReadToEnd());
+            apples = JsonSerializer.Deserialize<Apple[]>(sr.ReadToEnd(), JsonOptions);
         }
         catch (JsonException e)
         {
@@ -61,7 +69,7 @@ public static class JsonManager
         fs = File.Open($"{headPath}/.apples", FileMode.Create, FileAccess.ReadWrite);
         //re-write all apples
         StreamWriter sw = new StreamWriter(fs);
-        string json = JsonSerializer.Serialize(curApples, new JsonSerializerOptions {WriteIndented = true});
+        string json = JsonSerializer.Serialize(curApples, JsonOptions);
         sw.Write(json);
         sw.Close();
         fs.Close();
@@ -82,7 +90,7 @@ public static class JsonManager
             throw new TreePresenceException(GetTree($"{treePath}/.tree"));
         }
         StreamWriter sw = new StreamWriter(fs);
-        string json = JsonSerializer.Serialize(tree, new JsonSerializerOptions {WriteIndented = true});
+        string json = JsonSerializer.Serialize(tree, JsonOptions);
         sw.Write(json);
         sw.Close();
         fs.Close();
@@ -104,7 +112,7 @@ public static class JsonManager
             throw new TreePresenceException(GetTree($"{path}/.tree"));
         }
         StreamWriter sw = new StreamWriter(fs);
-        string json = JsonSerializer.Serialize(tree, new JsonSerializerOptions {WriteIndented = true});
+        string json = JsonSerializer.Serialize(tree, JsonOptions);
         sw.Write(json);
         sw.Close();
         fs.Close();
@@ -116,11 +124,12 @@ public static class JsonManager
         StreamReader sr = new StreamReader(fs);
 
         string json = sr.ReadToEnd();
-        Tree tree = JsonSerializer.Deserialize<Tree>(json) ?? throw new JsonPresenceException(json);
+        Tree tree = JsonSerializer.Deserialize<Tree>(json, JsonOptions) ?? throw new JsonPresenceException(json);
+        
+        // for some reason the jsonSerializer doesn't deserialize the apples array
         
         sr.Close();
         fs.Close();
-
         return tree;
     }
 }

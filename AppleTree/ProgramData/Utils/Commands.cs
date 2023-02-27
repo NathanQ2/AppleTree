@@ -1,4 +1,3 @@
-using AppleTree.ProgramData.AppleManagement;
 using AppleTree.ProgramData.TreeManagement;
 using AppleTree.ProgramData.Utils.Exceptions;
 
@@ -11,14 +10,14 @@ public static class Commands
 
     public static bool Debug;
 
-    public static Tree? ActiveLocalTree;
+    private static Tree? _activeLocalTree;
 
     public static string? LocalTreeName
     {
         get
         {
-            if (ActiveLocalTree != null)
-                return ActiveLocalTree.Name ?? null;
+            if (_activeLocalTree != null)
+                return _activeLocalTree.Name ?? null;
             return null;
         }
     }
@@ -51,11 +50,11 @@ public static class Commands
         }
         else if (baseCmd == "newTree")
         {
-            ActiveLocalTree = new Tree {Name = cmds[1], HeadDir = Directory.GetCurrentDirectory()};
+            _activeLocalTree = new Tree {Name = cmds[1], HeadDir = Directory.GetCurrentDirectory()};
 
             try
             {
-                JsonManager.NewTree(ActiveLocalTree, ActiveLocalTree.HeadDir);
+                JsonManager.NewTree(_activeLocalTree, _activeLocalTree.HeadDir);
             }
             catch (JsonPresenceException e)
             {
@@ -78,58 +77,45 @@ public static class Commands
         }
         else if (baseCmd is "track" or "addApple")
         {
-            if (ActiveLocalTree == null)
+            if (_activeLocalTree == null)
             {
                 Console.WriteLine("No active tree.");
 
                 return;
             }
-
-            if (cmds[1] == ".")
-            {
-                string[] potentialDirs = Directory.GetDirectories(WorkingDir);
-                List<string> finalPaths = new List<string>(), finalNames = new List<string>();
-
-                for (int i = 0; i < potentialDirs.Length - 1; i++) // exclude apple already tracked
-                {
-                    Apple curApple = ActiveLocalTree.Apples[i];
-                    if (WorkingDir + "/" + ActiveLocalTree.Apples[i].TrackedFilePath != potentialDirs[i])
-                    {
-                        finalPaths.Add(curApple.TrackedFilePath ?? throw new InvalidAppleException(curApple));
-                        finalNames.Add(curApple.TrackedFileName ?? throw new InvalidAppleException(curApple));
-                    }
-                }
-                ActiveLocalTree.AddApples(finalNames, finalPaths);
-
-                foreach (string fileName in finalNames)
-                {
-                    Console.WriteLine($"Tracking: {fileName}");
-                }
-            }
+            if (FileManager.IsFile($"{WorkingDir}/{cmds[1]}"))
+                _activeLocalTree.AddApple(FileManager.GetFileName($"{WorkingDir}/{cmds[1]}"), $"{WorkingDir}/{cmds[1]}");
             else
             {
-                ActiveLocalTree.AddApple(FileManager.GetFileName($"{WorkingDir}/{cmds[1]}"), $"{WorkingDir}/{cmds[1]}");
+                if (cmds[1] == ".")
+                {
+                    _activeLocalTree.AddApples(WorkingDir);
+                }
+                else
+                {
+                    _activeLocalTree.AddApples($"{WorkingDir}/{cmds[1]}");
+                }
             }
         }
         else if (baseCmd == "submit")
         {
-            if (ActiveLocalTree == null)
+            if (_activeLocalTree == null)
             {
                 Console.WriteLine("No active tree.");
 
                 return;
             }
-            ActiveLocalTree.UpdateApples();
+            _activeLocalTree.UpdateApples();
         }
         else if (baseCmd == "unSubmit")
         {
-            if (ActiveLocalTree == null)
+            if (_activeLocalTree == null)
             {
                 Console.WriteLine("No active tree.");
 
                 return;
             }
-            ActiveLocalTree.RollBackApples();
+            _activeLocalTree.RollBackApples();
         }
         else
         {
@@ -139,7 +125,15 @@ public static class Commands
 
     public static void LoadTree()
     {
-        ActiveLocalTree = JsonManager.GetTree($"{WorkingDir}/.tree");
+        try
+        {
+            _activeLocalTree = JsonManager.GetTree($"{WorkingDir}/.tree");
+            Console.WriteLine(_activeLocalTree.Apples.Count);
+        }
+        catch (FileNotFoundException e)
+        {
+            
+        }
     }
     
     private static void Help(string specificHelp)
