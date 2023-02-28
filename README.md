@@ -1,6 +1,9 @@
 # AppleTree
 A bad git clone
 
+# Why?
+- because
+
 # Commands
 - newTree - creates a new tree
 - track/addApple - select file/directory to start tracking in a tree
