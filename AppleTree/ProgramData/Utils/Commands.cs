@@ -117,9 +117,25 @@ public static class Commands
             }
             _activeLocalTree.RollBackApples();
         }
+        else if (baseCmd == "pwd")
+        {
+            Console.WriteLine(WorkingDir);
+        }
+        else if (baseCmd == "ptd")
+        {
+            if (_activeLocalTree != null)
+            {
+                Console.WriteLine($"{_activeLocalTree.HeadDir}/.tree");
+            }
+            else
+            {
+                Console.WriteLine("No active tree");
+            }
+        }
         else
         {
-            Console.WriteLine("Command not recognized.");
+            if (baseCmd != "")
+                Console.WriteLine("That command is not recognized.");
         }
     }
 
@@ -144,15 +160,17 @@ public static class Commands
                               "\n    newTree - creates a new tree" +
                               "\n    track/addApple - select file/directory to start tracking in a tree" +
                               "\n    submit - submits changes of tracked files to local tree" +
-                              "\n    submit n/network submits changes of tracked files to network tree" +
-                              "\n    unSubmit rolls back changes made to local tree" +
-                              "\n    unSubmit n/network rolls back changes made to network tree");
+                              "\n    submit n/network - submits changes of tracked files to network tree (not a thing yet)" +
+                              "\n    unSubmit - rolls back changes made to local tree" +
+                              "\n    unSubmit n/network - rolls back changes made to network tree (not a thing yet)" +
+                              "\n    pwd - prints working directory" +
+                              "\n    ptd - prints tree directory");
         }
-        else if (specificHelp == "get")
+        /*else if (specificHelp == "get")
         {
             Console.WriteLine("HELP:" +
                               "\nget (pkg)" +
                               "\n    - downloads a repository");
-        }
+        }*/
     }
 }
