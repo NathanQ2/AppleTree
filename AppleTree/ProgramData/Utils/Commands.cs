@@ -50,8 +50,16 @@ public static class Commands
         }
         else if (baseCmd == "newTree")
         {
-            _activeLocalTree = new Tree {Name = cmds[1], HeadDir = Directory.GetCurrentDirectory()};
+            try
+            {
+                _activeLocalTree = new Tree { Name = cmds[1], HeadDir = Directory.GetCurrentDirectory() };
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("No tree name provided.");
 
+                return;
+            }
             try
             {
                 JsonManager.NewTree(_activeLocalTree, _activeLocalTree.HeadDir);
@@ -144,7 +152,6 @@ public static class Commands
         try
         {
             _activeLocalTree = JsonManager.GetTree($"{WorkingDir}/.tree");
-            Console.WriteLine(_activeLocalTree.Apples.Count);
         }
         catch (FileNotFoundException e)
         {
