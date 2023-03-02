@@ -9,8 +9,8 @@ A bad git clone
 - track/addApple - select file/directory to start tracking in a tree
 - submit - submits changes of tracked files to local tree
 - submit n/network - submits changes of tracked files to network tree (not a thing yet)
-- unSubmit - rolls back changes made to local tree
-- unSubmit n/network - rolls back changes made to network tree (not a thing yet)
+- revert - rolls back un-submitted changes made to local tree
+- revert n/network - rolls back un-submitted changes made to network tree (not a thing yet)
 - pwd - prints working directory
 - ptd - prints tree directory
 
