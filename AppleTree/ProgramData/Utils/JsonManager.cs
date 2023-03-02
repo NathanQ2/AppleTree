@@ -16,7 +16,7 @@ public static class JsonManager
         TypeInfoResolver = new DefaultJsonTypeInfoResolver()
     };
     
-    private static readonly string ExePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? throw new Exception("Could not find application exe path.");
+    public static string ExePath { get; } = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? throw new Exception("Could not find application exe path.");
     public static void OverwriteSettings(Settings? settings)
     {
         Directory.CreateDirectory($"{ExePath}/data/");
@@ -53,9 +53,9 @@ public static class JsonManager
         Apple[] apples = Array.Empty<Apple>();
         try
         {
-            apples = JsonSerializer.Deserialize<Apple[]>(sr.ReadToEnd(), JsonOptions);
+            apples = JsonSerializer.Deserialize<Apple[]>(sr.ReadToEnd(), JsonOptions) ?? throw new JsonPresenceException(sr.ReadToEnd());
         }
-        catch (JsonException e)
+        catch (JsonException)
         {
             
         }
@@ -84,7 +84,7 @@ public static class JsonManager
         {
             fs = File.Open($"{treePath}/.tree", FileMode.CreateNew, FileAccess.ReadWrite);
         }
-        catch (IOException e)
+        catch (IOException)
         {
             throw new TreePresenceException(GetTree($"{treePath}/.tree"));
         }
@@ -106,7 +106,7 @@ public static class JsonManager
             File.Delete($"{path}/.tree");
             fs = File.Open($"{path}/.tree", FileMode.Create, FileAccess.ReadWrite);
         }
-        catch (IOException e)
+        catch (IOException)
         {
             throw new TreePresenceException(GetTree($"{path}/.tree"));
         }

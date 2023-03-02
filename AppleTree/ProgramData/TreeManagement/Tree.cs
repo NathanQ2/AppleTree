@@ -27,14 +27,17 @@ public class Tree
 
     public void AddApples(string directoryPath)
     {
-        string[] filePaths = FileManager.GetAllFilesIn(directoryPath);
+        List<string> filePaths = new List<string>(FileManager.GetAllFilesIn(directoryPath));
         List<string> fileNames = new List<string>();
         foreach (string file in filePaths)
         {
-            fileNames.Add(FileManager.GetFileName(file));
+            string fileName = FileManager.GetFileName(file);
+            if (fileName != ".tree")
+                fileNames.Add(fileName);
         }
-        
-        if (fileNames.Count != filePaths.Length)
+        filePaths.Remove($"{directoryPath}/.tree");
+
+        if (fileNames.Count != filePaths.Count)
             throw new InvalidNameAndPathException();
 
         for (int i = 0; i < fileNames.Count; i++)
@@ -42,12 +45,14 @@ public class Tree
             AddApple(fileNames[i], filePaths[i]);
         }
     }
+   
     public void UpdateApple(Apple apple)
     {
         string updatedApple = File.ReadAllText(apple.TrackedFilePath ?? throw new InvalidAppleException(apple));
         apple.TrackedFile = updatedApple;
         JsonManager.OverwriteTree(HeadDir ?? throw new TreeException(this), this);
     }
+   
     public void UpdateApples()
     {
         foreach (Apple apple in Apples)
@@ -57,16 +62,16 @@ public class Tree
         }
     }
 
-    public void RollBackApple(Apple apple)
+    private static void RollBackApple(Apple apple)
     {
         FileManager.WriteTo(apple.TrackedFilePath ?? throw new InvalidAppleException(apple), apple.TrackedFile ?? throw new InvalidAppleException(apple));
+        Console.WriteLine($"Rolled back {apple.TrackedFileName}");
     }
     
     public void RollBackApples()
     {
         foreach (Apple apple in Apples)
         {
-            Console.WriteLine($"Rolled back {apple.TrackedFileName}");
             RollBackApple(apple);
         }
     }

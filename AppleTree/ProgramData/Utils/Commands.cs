@@ -34,7 +34,7 @@ public static class Commands
             {
                 Help(cmds[1]);
             }
-            catch (IndexOutOfRangeException e)
+            catch (IndexOutOfRangeException)
             {
                 Help("");
             }
@@ -115,7 +115,7 @@ public static class Commands
             }
             _activeLocalTree.UpdateApples();
         }
-        else if (baseCmd == "unSubmit")
+        else if (baseCmd == "revert")
         {
             if (_activeLocalTree == null)
             {
@@ -140,6 +140,10 @@ public static class Commands
                 Console.WriteLine("No active tree");
             }
         }
+        else if (baseCmd == "addToPath")
+        {
+            FileManager.AddToPath(JsonManager.ExePath);
+        }
         else
         {
             if (baseCmd != "")
@@ -153,7 +157,7 @@ public static class Commands
         {
             _activeLocalTree = JsonManager.GetTree($"{WorkingDir}/.tree");
         }
-        catch (FileNotFoundException e)
+        catch (FileNotFoundException)
         {
             
         }
@@ -168,8 +172,8 @@ public static class Commands
                               "\n    track/addApple - select file/directory to start tracking in a tree" +
                               "\n    submit - submits changes of tracked files to local tree" +
                               "\n    submit n/network - submits changes of tracked files to network tree (not a thing yet)" +
-                              "\n    unSubmit - rolls back changes made to local tree" +
-                              "\n    unSubmit n/network - rolls back changes made to network tree (not a thing yet)" +
+                              "\n    revert - rolls back un-submitted changes made to local tree" +
+                              "\n    revert n/network - rolls back un-submitted changes made to network tree (not a thing yet)" +
                               "\n    pwd - prints working directory" +
                               "\n    ptd - prints tree directory");
         }

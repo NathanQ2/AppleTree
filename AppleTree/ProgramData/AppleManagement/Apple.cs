@@ -9,4 +9,6 @@ public class Apple
     public bool IsLocal { get; set; } = true;
     
     public string? TrackedFile { get; set; }
+    
+    public string? TrackedFileOld { get; set; }
 }

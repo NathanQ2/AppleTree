@@ -1,3 +1,6 @@
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+
 namespace AppleTree.ProgramData.Utils;
 
 public static class FileManager
@@ -37,7 +40,7 @@ public static class FileManager
 
             return false;
         }
-        catch (IOException e)
+        catch (IOException)
         {
             return true;
         }
@@ -97,5 +100,25 @@ public static class FileManager
         }
 
         return finishedPath;
+    }
+
+    // adds directory to environment variable
+    public static void AddToPath(string directory)
+    {
+        if (!Directory.Exists(directory))
+            throw new DirectoryNotFoundException(directory);
+        
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            Console.WriteLine("Run this command:" +
+                              "\n    cat << EOF >> ~/.zprofile" +
+                              $"\n    export PATH=\"\\$PATH:{directory}\"" +
+                              "\n    EOF");
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            Console.WriteLine("Run this command:" +
+                              $"\n    setx path \"%PATH%;{directory}\"");
+        }
     }
 }
