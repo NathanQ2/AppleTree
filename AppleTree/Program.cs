@@ -9,9 +9,6 @@ namespace AppleTree;
 
 internal static class Program
 {
-    private static Settings? _settings;
-    
-    
     private static void Main(string[] args)
     {
         GetSettings();
@@ -31,13 +28,13 @@ internal static class Program
         {
             if (args[0] == "debug")
             {
-                Commands.Debug = !Commands.Debug;
+                Constants.Debug = !Constants.Debug;
             }
             Commands.DoCommand(args);
         }
         catch (IndexOutOfRangeException e)
         {
-            if(Commands.Debug)
+            if(Constants.Debug)
                 Console.WriteLine(e);
         }
     }
@@ -46,11 +43,11 @@ internal static class Program
     {
         while (true) // application loop
         {
-            Console.Write($"{Commands.LocalTreeName ?? ""}>");
+            Console.Write($"{Constants.LocalTreeName ?? ""}>");
             string cmd = Console.ReadLine() ?? "";
             Commands.DoCommand(cmd.Split(' '));
 
-            if (Commands.Exited) // check if exit command was run
+            if (Constants.Exited) // check if exit command was run
                 Environment.Exit(0);
         }
         // ReSharper disable once FunctionNeverReturns
@@ -60,18 +57,18 @@ internal static class Program
     {
         try
         {
-            _settings = JsonManager.GetSettings();
+            Constants.Settings = JsonManager.GetSettings();
         }
         catch (SettingsExistsException e)
         {
-            if (Commands.Debug)
+            if (Constants.Debug)
                 Console.WriteLine(e);
-            _settings = new Settings();
-            JsonManager.OverwriteSettings(_settings);
+            Constants.Settings = new Settings();
+            JsonManager.OverwriteSettings(Constants.Settings);
         }
         catch (JsonPresenceException e)
         {
-            if (Commands.Debug)
+            if (Constants.Debug)
                 Console.WriteLine(e);
 
             Console.WriteLine("There was an error reading the settings.json file");

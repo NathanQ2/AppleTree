@@ -4,7 +4,8 @@ namespace AppleTree.ProgramData.Utils.Exceptions;
 
 public class TreeException : Exception
 {
-    public Tree Tree;
+    // ReSharper disable once MemberCanBePrivate.Global
+    public readonly Tree Tree;
     public TreeException(Tree tree)
     {
         Tree = tree;

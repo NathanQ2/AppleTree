@@ -7,7 +7,7 @@ public static class SetupManager
         Setup(new Settings());
     }
 
-    public static void Setup(Settings? settings)
+    private static void Setup(Settings? settings)
     {
         JsonManager.OverwriteSettings(settings);
     }

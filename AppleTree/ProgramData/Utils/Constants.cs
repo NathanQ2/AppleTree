@@ -1,6 +1,6 @@
 using AppleTree.ProgramData.TreeManagement;
 
-namespace AppleTree.ProgramData.Utils.Exceptions;
+namespace AppleTree.ProgramData.Utils;
 
 public static class Constants
 {

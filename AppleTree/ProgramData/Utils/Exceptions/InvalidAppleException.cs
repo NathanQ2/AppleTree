@@ -4,7 +4,8 @@ namespace AppleTree.ProgramData.Utils.Exceptions;
 
 public class InvalidAppleException : Exception
 {
-    public Apple Apple;
+    // ReSharper disable once MemberCanBePrivate.Global
+    public readonly Apple Apple;
     
     public InvalidAppleException(Apple apple)
     {

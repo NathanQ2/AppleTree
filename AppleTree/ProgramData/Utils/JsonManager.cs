@@ -27,7 +27,7 @@ public static class JsonManager
         fs.Close();
     }
 
-    public static Settings? GetSettings()
+    public static Settings GetSettings()
     {
         if (!Path.Exists($"{ExePath}/data/settings.json"))
         {
@@ -59,8 +59,7 @@ public static class JsonManager
         {
             
         }
-        List<Apple> curApples = new List<Apple>(apples ?? Array.Empty<Apple>());
-        curApples.Add(apple);
+        List<Apple> curApples = new List<Apple>(apples) { apple };
         sr.Close();
         fs.Close();
         

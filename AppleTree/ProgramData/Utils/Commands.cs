@@ -6,21 +6,6 @@ namespace AppleTree.ProgramData.Utils;
 
 public static class Commands
 {
-    public static bool Exited;
-
-    public static bool Debug;
-
-    private static Tree? _activeLocalTree;
-
-    public static string? LocalTreeName
-    {
-        get
-        {
-            if (_activeLocalTree != null)
-                return _activeLocalTree.Name ?? null;
-            return null;
-        }
-    }
 
     private static readonly string WorkingDir = Directory.GetCurrentDirectory();
 
@@ -41,18 +26,18 @@ public static class Commands
         }
         else if (baseCmd == "exit")
         {
-            Exited = true;
+            Constants.Exited = true;
         }
         else if (baseCmd == "debug")
         {
-            Debug = !Debug;
-            Console.WriteLine($"Debugging set to: {Debug}");
+            Constants.Debug = !Constants.Debug;
+            Console.WriteLine($"Debugging set to: {Constants.Debug}");
         }
         else if (baseCmd == "newTree")
         {
             try
             {
-                _activeLocalTree = new Tree { Name = cmds[1], HeadDir = Directory.GetCurrentDirectory() };
+                Constants.ActiveLocalTree = new Tree { Name = cmds[1], HeadDir = Directory.GetCurrentDirectory() };
             }
             catch (IndexOutOfRangeException)
             {
@@ -62,11 +47,11 @@ public static class Commands
             }
             try
             {
-                JsonManager.NewTree(_activeLocalTree, _activeLocalTree.HeadDir);
+                JsonManager.NewTree(Constants.ActiveLocalTree, Constants.ActiveLocalTree.HeadDir);
             }
             catch (JsonPresenceException e)
             {
-                if (Debug)
+                if (Constants.Debug)
                 {
                     Console.WriteLine(e);
                 }
@@ -75,7 +60,7 @@ public static class Commands
             }
             catch (TreePresenceException e)
             {
-                if (Debug)
+                if (Constants.Debug)
                 {
                     Console.WriteLine(e);
                 }
@@ -85,45 +70,38 @@ public static class Commands
         }
         else if (baseCmd is "track" or "addApple")
         {
-            if (_activeLocalTree == null)
+            if (Constants.ActiveLocalTree == null)
             {
                 Console.WriteLine("No active tree.");
 
                 return;
             }
             if (FileManager.IsFile($"{WorkingDir}/{cmds[1]}"))
-                _activeLocalTree.AddApple(FileManager.GetFileName($"{WorkingDir}/{cmds[1]}"), $"{WorkingDir}/{cmds[1]}");
+                Constants.ActiveLocalTree.AddApple(FileManager.GetFileName($"{WorkingDir}/{cmds[1]}"), $"{WorkingDir}/{cmds[1]}");
             else
             {
-                if (cmds[1] == ".")
-                {
-                    _activeLocalTree.AddApples(WorkingDir);
-                }
-                else
-                {
-                    _activeLocalTree.AddApples($"{WorkingDir}/{cmds[1]}");
-                }
+                Constants.ActiveLocalTree.AddApples(cmds[1] == "." ? WorkingDir : $"{WorkingDir}/{cmds[1]}");
             }
         }
         else if (baseCmd == "submit")
         {
-            if (_activeLocalTree == null)
+            if (Constants.ActiveLocalTree == null)
             {
                 Console.WriteLine("No active tree.");
 
                 return;
             }
-            _activeLocalTree.UpdateApples();
+            Constants.ActiveLocalTree.UpdateApples();
         }
         else if (baseCmd == "revert")
         {
-            if (_activeLocalTree == null)
+            if (Constants.ActiveLocalTree == null)
             {
                 Console.WriteLine("No active tree.");
 
                 return;
             }
-            _activeLocalTree.RollBackApples();
+            Constants.ActiveLocalTree.RollBackApples();
         }
         else if (baseCmd == "pwd")
         {
@@ -131,14 +109,7 @@ public static class Commands
         }
         else if (baseCmd == "ptd")
         {
-            if (_activeLocalTree != null)
-            {
-                Console.WriteLine($"{_activeLocalTree.HeadDir}/.tree");
-            }
-            else
-            {
-                Console.WriteLine("No active tree");
-            }
+            Console.WriteLine(Constants.ActiveLocalTree != null ? $"{Constants.ActiveLocalTree.HeadDir}/.tree" : "No active tree");
         }
         else if (baseCmd == "addToPath")
         {
@@ -155,7 +126,7 @@ public static class Commands
     {
         try
         {
-            _activeLocalTree = JsonManager.GetTree($"{WorkingDir}/.tree");
+            Constants.ActiveLocalTree = JsonManager.GetTree($"{WorkingDir}/.tree");
         }
         catch (FileNotFoundException)
         {
