@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+
 using AppleTree.ProgramData.AppleManagement;
 using AppleTree.ProgramData.Utils;
 using AppleTree.ProgramData.Utils.Exceptions;

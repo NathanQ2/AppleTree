@@ -101,7 +101,6 @@ public static class FileManager
         return finishedPath;
     }
 
-    // adds directory to environment variable
     public static void AddToPath(string directory)
     {
         if (!Directory.Exists(directory))
