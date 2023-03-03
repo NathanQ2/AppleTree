@@ -2,7 +2,7 @@
 A bad git clone
 
 # Why?
-- because
+- because.
 
 # Commands
 - newTree - creates a new tree
@@ -18,3 +18,21 @@ A bad git clone
 - A Tree is a entire project
 - A Apple is a file in that project
 - A Branch is a portion of that project that can be merged into the Tree (not implemented)
+
+# What can I do?
+- Create trees
+- Track files (apples)
+- Submit changes of tracked files to tree
+- Revert any changes made to a apple to version in it's tree
+
+# What is planned? (ordered by priority)
+1. Implement remote trees
+2. Implement branches
+3. Track multiple versions of files
+
+# How do I build myself?
+- Download the source from the latest release (not required but recomended)
+- Extract the all the files in the .zip file
+- Open the AppleTree.sln in your favorite .net IDE (AppleTee was wrote in .net7 so make sure your IDE supports that)
+- Click the build button (usually towards top of window)
+- Done
