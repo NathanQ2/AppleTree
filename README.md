@@ -26,7 +26,7 @@ A bad git clone
 - Submit changes of tracked files to tree
 - Revert any changes made to a apple to version in it's tree
 
-# What is planned? (ordered by priority. Not activly working on this...)
+# What is planned? (ordered by priority. Not actively working on this...)
 1. Implement remote trees
 2. Implement branches
 3. Track multiple versions of files
